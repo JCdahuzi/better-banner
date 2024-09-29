@@ -88,6 +88,9 @@ export default class BetterBanner extends PureComponent {
     componentDidMount() {
         this.isInitScroll = true;
         setTimeout(() => this.initScroll(), 0);
+        if (this.nextPage === 1) {
+            this.setActiveIndicatorX(this.activeIndicatorX * this.nextPage);
+        }
         this.startAutoScroll();
     }
 
@@ -179,7 +182,7 @@ export default class BetterBanner extends PureComponent {
     setActiveIndicatorX(x) {
         x = this.props.isSeamlessScroll ? x - this.activeIndicatorX - this.props.indicatorGap / 2 : x;
         x = (Platform.OS === 'harmony' && this.nextPage === 1) ? x + this.props.indicatorGap / 2 : x;
-        this.activeIndicator.setNativeProps({style: {left: x}})
+        this.activeIndicator.setNativeProps({style: {left: x,zIndex: 1}}) //harmony os 有层级问题
     }
 
     setBannerTitleText(y) {
@@ -210,6 +213,7 @@ export default class BetterBanner extends PureComponent {
         }
         this.setBannerTitleText(bannerContentY);
         if (this.isIndicatorScrollEnd()) {
+            this.initActiveIndicatorX = null //最后一张返回第一张的时候这个值要初始化
             return;
         }
         this.setActiveIndicatorX(indicatorX);
